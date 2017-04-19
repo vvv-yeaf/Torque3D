@@ -472,10 +472,10 @@ template<class T> T ReservedSocketList<T>::resolve(NetSocket socketToResolve)
    return entry.used ? entry.value : -1;
 }
 
-static ConnectionNotifyEvent*   smConnectionNotify = NULL;
-static ConnectionAcceptedEvent* smConnectionAccept = NULL;
-static ConnectionReceiveEvent*  smConnectionReceive = NULL;
-static PacketReceiveEvent*      smPacketReceive = NULL;
+ConnectionNotifyEvent*   Net::smConnectionNotify = NULL;
+ConnectionAcceptedEvent* Net::smConnectionAccept = NULL;
+ConnectionReceiveEvent*  Net::smConnectionReceive = NULL;
+PacketReceiveEvent*      Net::smPacketReceive = NULL;
 
 ConnectionNotifyEvent& Net::getConnectionNotifyEvent()
 {
@@ -786,17 +786,15 @@ NetSocket Net::openConnectTo(const char *addressString)
       if (socketFd != InvalidSocketHandle)
       {
          setBlocking(handleFd, false);
-         if (::connect(socketFd, (struct sockaddr *)&ipAddr, sizeof(ipAddr)) == -1 &&
-            errno != EINPROGRESS)
+         if (::connect(socketFd, (struct sockaddr *)&ipAddr, sizeof(ipAddr)) == -1)
          {
-            error = PlatformNetState::getLastError();
-
-            if (error != Net::WouldBlock)
+            Net::Error err = PlatformNetState::getLastError();
+            if (err != Net::WouldBlock)
             {
-              Con::errorf("Error connecting %s: %s",
-                 addressString, strerror(errno));
-              closeSocket(handleFd);
-              handleFd = NetSocket::INVALID;
+               Con::errorf("Error connecting to %s: %u",
+                  addressString, err);
+               closeSocket(handleFd);
+               handleFd = NetSocket::INVALID;
             }
          }
       }
@@ -817,14 +815,20 @@ NetSocket Net::openConnectTo(const char *addressString)
       sockaddr_in6 ipAddr6;
       NetAddressToIPSocket6(&address, &ipAddr6);
       SOCKET socketFd = PlatformNetState::smReservedSocketList.activate(handleFd, AF_INET6, false, true);
-      if (::connect(socketFd, (struct sockaddr *)&ipAddr6, sizeof(ipAddr6)) == -1 &&
-         errno != EINPROGRESS)
+      if (socketFd != InvalidSocketHandle)
       {
          setBlocking(handleFd, false);
-         Con::errorf("Error connecting %s: %s",
-            addressString, strerror(errno));
-         closeSocket(handleFd);
-         handleFd = NetSocket::INVALID;
+         if (::connect(socketFd, (struct sockaddr *)&ipAddr6, sizeof(ipAddr6)) == -1)
+         {
+            Net::Error err = PlatformNetState::getLastError();
+            if (err != Net::WouldBlock)
+            {
+               Con::errorf("Error connecting to %s: %u",
+                  addressString, err);
+               closeSocket(handleFd);
+               handleFd = NetSocket::INVALID;
+            }
+         }
       }
       else
       {
@@ -1668,7 +1672,7 @@ Net::Error Net::send(NetSocket handleFd, const U8 *buffer, S32 bufferSize, S32 *
 
    if (outBytesWritten)
    {
-      *outBytesWritten = *outBytesWritten < 0 ? 0 : bytesWritten;
+      *outBytesWritten = outBytesWritten < 0 ? 0 : bytesWritten;
    }
 
    return PlatformNetState::getLastError();
