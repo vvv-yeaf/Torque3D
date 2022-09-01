@@ -31,7 +31,7 @@ struct v_NHBlend
 {
    float4 hpos       : TORQUE_POSITION;
    float2 uv0        : TEXCOORD0;
-   float4 offset[2]  : TEXCOORD1;
+   float4 offset  : TEXCOORD1;
 };
 
 

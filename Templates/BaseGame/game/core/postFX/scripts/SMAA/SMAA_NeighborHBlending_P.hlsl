@@ -32,15 +32,13 @@ struct v_NHBlend
 {
    float4 hpos       : TORQUE_POSITION;
    float2 uv0        : TEXCOORD0;
-   float4 offset[2]  : TEXCOORD1;
+   float4 offset  : TEXCOORD1;
 };
 
 
-float4 main( V_NHBlend IN ) : TORQUE_TARGET0
-{
-  float4 color = TORQUE_TEX2D(sceneTex, IN.uv0);
-  
-  return SMAANeighborhoodBlendingPS(IN.uv0, IN.offset, color, blendTex);
+float4 main( v_NHBlend IN ) : TORQUE_TARGET0
+{  
+  return SMAANeighborhoodBlendingPS(IN.uv0, IN.offset, texture_sceneTex, texture_blendTex);
 
 } 
 
