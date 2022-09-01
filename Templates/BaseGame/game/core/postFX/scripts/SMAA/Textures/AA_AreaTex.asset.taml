@@ -1,0 +1,8 @@
+<ImageAsset
+    canSave="true"
+    canSaveDynamicFields="true"
+    AssetName="AA_AreaTex"
+    imageFile="@assetFile=AreaTexDX10.dds"
+    UseMips="false"
+    isHDRImage="false"
+    imageType="Albedo" />
