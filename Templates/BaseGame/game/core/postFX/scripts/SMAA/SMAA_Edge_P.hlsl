@@ -37,7 +37,7 @@ struct v_Edge
 float4 main( v_Edge IN ) : TORQUE_TARGET0
 {
 
-  return SMAALumaEdgeDetectionPS(IN.uv0, IN.offset, TORQUE_TEX2D(sceneTex, IN.uv0));
+  return float4(SMAALumaEdgeDetectionPS(IN.uv0, IN.offset, texture_sceneTex),0,0);
   
 }
 

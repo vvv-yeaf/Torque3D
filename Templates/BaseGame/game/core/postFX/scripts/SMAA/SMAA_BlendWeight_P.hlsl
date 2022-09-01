@@ -23,7 +23,7 @@
 
 #include "SMAA_Params.hlsl"
 
-TORQUE_SAMPLER2D(edgesTex, 0);
+TORQUE_UNIFORM_SAMPLER2D(edgesTex, 0);
 TORQUE_UNIFORM_SAMPLER2D(areaTex, 1);
 TORQUE_UNIFORM_SAMPLER2D(searchTex, 2);
 
@@ -39,11 +39,8 @@ struct v_Blend
 
 
 float4 main( v_Blend IN ) : TORQUE_TARGET0
-{
-  
-  float4 color = TORQUE_TEX2D(edgesTex, IN.uv0);
- 
-  return SMAABlendingWeightCalculationPS(IN.uv0, IN.pix_uv, IN.offset, color, areaTex, searchTex);
+{   
+  return SMAABlendingWeightCalculationPS(IN.uv0, IN.pix_uv, IN.offset, texture_edgesTex, texture_areaTex, texture_searchTex, float4(0,0,0,0));
 
 } 
 
