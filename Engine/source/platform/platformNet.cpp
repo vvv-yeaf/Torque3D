@@ -472,10 +472,10 @@ template<class T> T ReservedSocketList<T>::resolve(NetSocket socketToResolve)
    return entry.used ? entry.value : -1;
 }
 
-ConnectionNotifyEvent*   Net::smConnectionNotify = NULL;
-ConnectionAcceptedEvent* Net::smConnectionAccept = NULL;
-ConnectionReceiveEvent*  Net::smConnectionReceive = NULL;
-PacketReceiveEvent*      Net::smPacketReceive = NULL;
+static ConnectionNotifyEvent*   smConnectionNotify = NULL;
+static ConnectionAcceptedEvent* smConnectionAccept = NULL;
+static ConnectionReceiveEvent*  smConnectionReceive = NULL;
+static PacketReceiveEvent*      smPacketReceive = NULL;
 
 ConnectionNotifyEvent& Net::getConnectionNotifyEvent()
 {

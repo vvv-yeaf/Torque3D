@@ -88,8 +88,8 @@ void DeferredSpecMapHLSL::processPix( Vector<ShaderComponent*> &componentList, c
    else
       meta->addStatement(new GenOp("   @ = tex2D(@, @);\r\n", specColorElem, specularMap, texCoord));
    
-   meta->addStatement(new GenOp("   @.b = dot(@.rgb, float3(0.3, 0.59, 0.11));\r\n", material, specColor));
-   meta->addStatement(new GenOp("   @.a = @.a;\r\n", material, specColor));
+   meta->addStatement(new GenOp("   @.b = @.b;\r\n", material, specColor));
+   meta->addStatement(new GenOp("   @.a = @.a/2;\r\n", material, specColor));
 
    output = meta;
 }
@@ -183,8 +183,8 @@ void DeferredSpecVarsHLSL::processPix( Vector<ShaderComponent*> &componentList, 
    MultiLine * meta = new MultiLine;
    //matinfo.g slot reserved for AO later
    meta->addStatement(new GenOp("   @.g = 1.0;\r\n", material));
-   meta->addStatement(new GenOp("   @.a = @/128;\r\n", material, specPower));
-   meta->addStatement(new GenOp("   @.b = @/5;\r\n", material, specStrength));
+   meta->addStatement(new GenOp("   @.a = @/255;\r\n", material, specPower));
+   meta->addStatement(new GenOp("   @.b = @;\r\n", material, specStrength));
    output = meta;
 }
 
