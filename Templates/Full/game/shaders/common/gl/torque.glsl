@@ -295,45 +295,52 @@ bool getFlag(float flags, float num)
 // #define TORQUE_STOCK_GAMMA
 #ifdef TORQUE_STOCK_GAMMA
 // Sample in linear space. Decodes gamma.
-vec4 toLinear(vec4 tex)
+vec4 toLinear(vec4 _sample)
 {
-   return tex;
+   return _sample;
 }
 // Encodes gamma.
-vec4 toGamma(vec4 tex)
+vec4 toGamma(vec4 _sample)
 {
-   return tex;
+   return _sample;
 }
-vec3 toLinear(vec3 tex)
+vec3 toLinear(vec3 _sample)
 {
-   return tex;
+   return _sample;
 }
 // Encodes gamma.
-vec3 toGamma(vec3 tex)
+vec3 toGamma(vec3 _sample)
 {
-   return tex;
+   return _sample;
 }
 #else
+
+//IAN TAYLOR's sRGB Transfom Approximations 
+//http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
+
 // Sample in linear space. Decodes gamma.
-vec4 toLinear(vec4 tex)
+vec3 toLinear(vec3 _sample)
 {
-   return vec4(pow(abs(tex.rgb), vec3(2.2)), tex.a);
+   return _sample* (_sample* (_sample* 0.305306011 + 0.682171111) + 0.012522878);
+}
+
+// Encodes gamma.
+vec3 toGamma(vec3 _sample)
+{
+   return max(1.055 * pow(_sample, vec3(0.416666667)) - 0.055, vec3(0.0));
+}
+
+// Sample in linear space. Decodes gamma.
+vec4 toLinear(vec4 _sample)
+{
+   return vec4(toLinear(_sample.rgb), _sample.a);
 }
 // Encodes gamma.
-vec4 toGamma(vec4 tex)
+vec4 toGamma(vec4 _sample)
 {
-   return vec4(pow(abs(tex.rgb), vec3(1.0/2.2)), tex.a);
+   return vec4(toGamma(_sample.rgb), _sample.a);
 }
-// Sample in linear space. Decodes gamma.
-vec3 toLinear(vec3 tex)
-{
-   return pow(abs(tex), vec3(2.2));
-}
-// Encodes gamma.
-vec3 toGamma(vec3 tex)
-{
-   return pow(abs(tex), vec3(1.0/2.2));
-}
+
 #endif //
 
 #endif // _TORQUE_GLSL_
